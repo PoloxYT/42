@@ -21,7 +21,7 @@ AI was used for questions and error searching but not to generate code.
 
 ### Library Description
 
-`libnextline.a` contains 5 utilisable C functions:
+`libnextline.a` contains 5 usable C functions:
 - get_next_line, the principal function of the project,
 - ft_memcpy, used by get_next_line to generate the return string, 
 - ft_strlen, used by get_next_line to take some string lengths,

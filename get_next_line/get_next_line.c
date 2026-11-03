@@ -1,0 +1,136 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pabaille <pabaille@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/11/02 09:26:31 by pabaille          #+#    #+#             */
+/*   Updated: 2026/11/03 11:37:19 by pabaille         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include <stdio.h>
+#include <fcntl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include "get_next_line.h"
+#include <stdlib.h>
+#include <unistd.h>
+
+static void	*freebuf(char *buf)
+{
+	free(buf);
+	return (NULL);
+}
+
+static void	*freeall(char *buf, char *rst)
+{
+	free(buf);
+	free(rst);
+	return (NULL);
+}
+
+char	*get_next_line(int fd)
+{
+	char		*buf;
+	char		*dest;
+	int			i;
+	int			lus;
+	static char	*rst;
+
+	i = 0;
+	lus = 0;
+	buf = malloc((BUFFER_SIZE + 1) * sizeof(char));
+	if (!buf)
+		return (NULL);
+	dest = NULL;
+	if (fd < 0 || BUFFER_SIZE <= 0)
+		return (freebuf(buf));
+	while (rst && rst[i] != '\n' && rst[i] != '\0')
+		i += 1;
+	if (rst && rst[i] == '\n')
+	{
+		dest = malloc((i + 2) * sizeof(char));
+		if (!dest)
+			return (freebuf(buf));
+		ft_memcpy(dest, rst, i + 1);
+		dest[i + 1] = '\0';
+		rst = ft_substr(rst, i + 1, ft_strlen(rst) - (i + 1));
+		free(buf);
+		return (dest);
+	}
+	else
+	{
+		i = 0;
+		lus = read(fd, buf, BUFFER_SIZE);
+		if (lus != -1)
+		{
+			buf[lus] = '\0';
+			while (lus > 0)
+			{
+				rst = ft_strjoin(rst, buf);
+				while (rst[i] != '\n' && rst[i] != '\0')
+					i += 1;
+				if (rst[i] == '\n')
+				{
+					dest = malloc((i + 2) * sizeof(char));
+					if (!dest)
+						return (freeall(buf, rst));
+					ft_memcpy(dest, rst, i + 1);
+					dest[i + 1] = '\0';
+					rst = ft_substr(rst, i + 1, ft_strlen(rst) - (i + 1));
+					break ;
+				}
+				lus = read(fd, buf, BUFFER_SIZE);
+				if (lus > 0)
+					buf[lus] = '\0';
+			}
+			if (rst && lus == 0)
+			{
+				i = 0;
+				while (rst[i] != '\0')
+					i += 1;
+				dest = malloc((i + 2) * sizeof(char));
+				if (!dest)
+					return (freeall(buf, rst));
+				ft_memcpy(dest, rst, i + 1);
+				dest[i + 1] = '\0';
+				freeall(buf, rst);
+				return (dest);
+			}
+		}
+		freeall(buf, rst);
+	}
+	if (!rst)
+		return (NULL);
+	return (dest);
+}
+
+// int	main(void)
+// {
+// 	int		i;
+// 	char	*str;
+// 	int		fd;
+
+// 	i = 0;
+// 	str = malloc(2048 * sizeof(char));
+// 	if (!str)
+// 		return (0);
+// 	fd = open("test", O_RDWR, S_IRUSR | S_IRGRP | S_IROTH);
+// 	while (i <= 3)
+// 	{
+// 		str = get_next_line(fd);
+// 		printf("%s", str);
+// 		i += 1;
+// 	}
+// 	free(str);
+// }
+
+// • Assurez-vous que votre fonction se comporte comme attendu, aussi bien lors de la lecture d'un fichier que lors de la lecture depuis l'entrée standard.
+// 7
+// • Le comportement de `get_next_line()` est indéfini si le fichier associé au descripteur de fichier est modifié après le dernier appel, alors que `read()` n'a pas encore
+//  atteint la fin du fichier. • get_next_line() présente également un comportement indéfini lors de la lecture d’un fichier binaire. Cependant, vous pouvez,
+//  si vous le souhaitez, mettre en place une approche logique pour gérer ce cas.
+// Votre fonction fonctionne-t-elle toujours si la valeur de BUFFER_SIZE est 9999 ? Si elle est égale à 1 ? À 10 000 000 ? Savez-vous pourquoi ?
+// Essayez de lire le moins de données possible à chaque appel de get_next_line(). Si vous rencontrez un saut de ligne, vous devez renvoyer la ligne en cours.

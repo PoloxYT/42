@@ -1,0 +1,31 @@
+void ft_triselect(int *T[])
+{
+    int i;
+    int issort;
+    int stock;
+
+    i = 0;
+    issort = 0;
+    stock = 0;
+    while (issort != 0)
+    {
+        while(T[i])
+        {
+            if(T[i - 1] > T[i])
+                ra(T);
+            i++;
+        }
+        stock = 1;
+        i = 0;
+        while (T[i])
+        {
+            if (T[i] < T[i + 1])
+                i += 1;
+            else
+                break ;
+        }
+        if (i == stock)
+            issort = 1;
+    }
+} 
+

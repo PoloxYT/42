@@ -6,59 +6,64 @@
 /*   By: pabaille <pabaille@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/11/06 13:53:55 by pabaille          #+#    #+#             */
-/*   Updated: 2026/11/06 16:09:26 by pabaille         ###   ########.fr       */
+/*   Updated: 2026/11/17 09:38:02 by pabaille         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
-#include <stdlib.h>
+#include "push_swap.h"
 
-void	pb(int *astack[], int *bstack[])
+void	pb(int *astack[], int *bstack[], t_bench *benchmark, t_sizes *sizes)
 {
 	int	i;
 
-	if (!(*astack) || (*astack)[0] == -1)
+	i = sizes->bsize;
+	if (sizes->asize == 0)
 		return ;
-	i = 0;
-	while ((*bstack)[i] != -1)
-		i += 1;
-	while (i >= 0)
+	// write(1, "pb\n", 3); A COMMENTER EN LIVE CODING
+	benchmark->operations[4] += 1;
+	if (sizes->bsize != 0)
 	{
-		(*bstack)[i + 1] = (*bstack)[i];
-		i--;
+		while (i > 0)
+		{
+			(*bstack)[i] = (*bstack)[i - 1];
+			i -= 1;
+		}
 	}
 	(*bstack)[0] = (*astack)[0];
-	i = 0;
-	while ((*astack)[i] != -1)
+	sizes->bsize += 1;
+	while (i + 1 != sizes->asize)
 	{
 		(*astack)[i] = (*astack)[i + 1];
 		i += 1;
 	}
+	sizes->asize -= 1;
 }
 
-void	pa(int *astack[], int *bstack[])
+void	pa(int *astack[], int *bstack[], t_bench *benchmark, t_sizes *sizes)
 {
 	int	i;
 
-	i = 0;
-	if (!(*bstack))
+	i = sizes->asize;
+	if (sizes->bsize == 0)
 		return ;
-	if ((*astack)[0])
+	// write(1, "pa\n", 3); A COMMENTER EN LIVE CODING
+	benchmark->operations[3] += 1;
+	if (sizes->asize != 0)
 	{
-		while ((*astack)[i] != -1)
+		while (i > 0)
 		{
-			(*astack)[i + 1] = (*astack)[i];
-			i += 1;
+			(*astack)[i] = (*astack)[i - 1];
+			i -= 1;
 		}
 	}
 	(*astack)[0] = (*bstack)[0];
-	i = 0;
-	while ((*bstack)[i + 1] != -1)
+	sizes->asize += 1;
+	while (i + 1 != sizes->bsize)
 	{
 		(*bstack)[i] = (*bstack)[i + 1];
 		i += 1;
 	}
-	(*bstack)[i] = (*bstack)[i + 1];
+	sizes->bsize -= 1;
 }
 //
 //

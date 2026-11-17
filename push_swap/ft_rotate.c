@@ -6,92 +6,62 @@
 /*   By: pabaille <pabaille@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/11/06 14:06:37 by pabaille          #+#    #+#             */
-/*   Updated: 2026/11/06 16:06:22 by pabaille         ###   ########.fr       */
+/*   Updated: 2026/11/17 09:39:15 by pabaille         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
-#include <stdlib.h>
+#include "push_swap.h"
 
-void	ra(int **astack)
+void	ra(int **astack, int print, t_bench *benchmark, t_sizes *sizes)
 {
 	int	i;
-	int	stock;
-	int	stockone;
+	int	stockfirst;
 
 	i = 0;
-	stock = 0;
-	stockone = (*astack)[0];
-	while ((*astack)[i] != -1)
-		i += 1;
-	stock = (*astack)[i - 1];
-	(*astack)[i - 1] = (*astack)[0];
-	i = 0;
-	while ((*astack)[i + 1] != stockone)
+	if (sizes->asize < 2)
+		return ;
+	stockfirst = (*astack)[0];
+	if (print == 1)
+		benchmark->operations[5] += 1;
+	// if (print == 1) A COMMENTER EN LIVE CODING
+	// 	write(1, "ra\n", 3); A COMMENTER EN LIVE CODING
+	while (i < sizes->asize - 1)
 	{
 		(*astack)[i] = (*astack)[i + 1];
 		i += 1;
 	}
-	(*astack)[i] = stock;
+	(*astack)[i] = stockfirst;
 }
 
-void ft_triselect(int **T)
-{
-    int i;
-    int issort;
-    int stock;
-
-    i = 0;
-    issort = 0;
-    stock = 0;
-    while (issort != 1)
-    {
-        while((*T)[i + 1] != -1)
-        {
-            if((*T)[i] < (*T)[i + 1])
-                ra(T);
-            i++;
-        }
-        stock = 1;
-        i = 0;
-        while ((*T)[i + 1] != -1)
-        {
-            if ((*T)[i] < (*T)[i + 1])
-                i += 1;
-            else
-                break ;
-        }
-        if (i == stock)
-            issort = 1;
-    }
-}
-
-void	rb(int **bstack)
+void	rb(int **bstack, int print, t_bench *benchmark, t_sizes *sizes)
 {
 	int	i;
-	int	stock;
-	int	stockone;
+	int	stockfirst;
 
 	i = 0;
-	stock = 0;
-	stockone = (*bstack)[0];
-	while ((*bstack)[i] != -1)
-		i += 1;
-	stock = (*bstack)[i - 1];
-	(*bstack)[i - 1] = (*bstack)[0];
-	i = 0;
-	while ((*bstack)[i + 1] != stockone)
+	if (sizes->bsize < 2)
+		return ;
+	stockfirst = (*bstack)[0];
+	if (print == 1)
+		benchmark->operations[6] += 1;
+	// if (print == 1) A COMMENTER EN LIVE CODING
+	// 	write(1, "rb\n", 3); A COMMENTER EN LIVE CODING
+	while (i < sizes->bsize - 1)
 	{
 		(*bstack)[i] = (*bstack)[i + 1];
 		i += 1;
 	}
-	(*bstack)[i] = stock;
+	(*bstack)[i] = stockfirst;
 }
 
-void	rr(int **astack, int **bstack)
+void	rr(int **astack, int **bstack, t_bench *benchmark, t_sizes *sizes)
 {
-	ra(astack);
-	rb(bstack);
+	if (sizes->asize < 2 && sizes->bsize < 2)
+		return ;
+	// write(1, "rr\n", 3); A COMMENTER EN LIVE CODING
+	benchmark->operations[7] += 1;
+	ra(astack, 0, benchmark, sizes);
+	rb(bstack, 0, benchmark, sizes);
 }
 
 // int	main(void)
